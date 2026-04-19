@@ -561,3 +561,58 @@ SELECT * FROM Booth_history_tbl;
 SELECT * FROM BoothAssignment_history_tbl;
 SELECT * FROM VendorApplication_history_tbl;
 GO
+
+INSERT INTO Vendor_tbl (VendorName, ContactName, Email, Phone, Category)
+VALUES
+('Twin Cities BBQ', 'Alex Johnson', 'alex@tcbbq.com', '555-222-1111', 'Food'),
+('Midwest Sweets', 'Taylor Smith', 'taylor@sweets.com', '555-333-2222', 'Food'),
+('Handmade Crafts Co', 'Jordan Lee', 'jordan@crafts.com', '555-444-3333', 'Crafts'),
+('North Woods Apparel', 'Chris Miller', 'chris@apparel.com', '555-555-4444', 'Retail'),
+('Fresh Farm Produce', 'Sam Wilson', 'sam@farm.com', '555-666-5555', 'Food'),
+('Artisan Jewelry', 'Casey Brown', 'casey@jewelry.com', '555-777-6666', 'Crafts'),
+('Lakeside Coffee', 'Jamie Green', 'jamie@coffee.com', '555-888-7777', 'Food'),
+('Vintage Goods', 'Pat Taylor', 'pat@vintage.com', '555-999-8888', 'Retail');
+
+INSERT INTO VendorApplication_tbl (VendorID, FairEventID, SubmittedDate, ApplicationStatus)
+VALUES
+(3, 1, GETDATE(), 'Submitted'),
+(4, 1, GETDATE(), 'Approved'),
+(5, 1, GETDATE(), 'Rejected'),
+(6, 1, GETDATE(), 'Approved'),
+(7, 1, GETDATE(), 'UnderReview'),
+(8, 1, GETDATE(), 'Approved'),
+(9, 1, GETDATE(), 'Submitted'),
+(10, 1, GETDATE(), 'Approved');
+
+INSERT INTO Booth_tbl (OperationalPeriodID, BoothCode, Zone, BoothSize, BoothAvailabilityStatus)
+VALUES
+(2, 'C301', 'East Wing', '10x10', 'Available'),
+(2, 'D410', 'West Wing', '15x15', 'Available'),
+(2, 'E515', 'Main Street', '20x20', 'Available'),
+(2, 'F620', 'Food Court', '25x25', 'Available');
+
+INSERT INTO BoothAssignment_tbl (ApplicationID, BoothID, AssignDate, AssignmentStatus)
+VALUES
+(4, 3, GETDATE(), 'Confirmed'),
+(6, 4, GETDATE(), 'Confirmed'),
+(8, 5, GETDATE(), 'Confirmed'),
+(10, 6, GETDATE(), 'Confirmed');
+
+
+INSERT INTO ParticipationRecord_tbl (BoothAssignmentID, OperationalPeriodID, CheckInDate, AttendanceStatus, Notes)
+VALUES
+(2, 2, GETDATE(), 'CheckedIn', 'On time'),
+(3, 2, GETDATE(), 'CheckedIn', 'Set up early'),
+(4, 2, GETDATE(), 'CheckedIn', 'Busy booth'),
+(5, 2, GETDATE(), 'NoShow', 'Did not arrive');
+
+SELECT 
+    v.VendorName,
+    va.ApplicationStatus,
+    b.BoothCode,
+    pr.AttendanceStatus
+FROM Vendor_tbl v
+JOIN VendorApplication_tbl va ON v.VendorID = va.VendorID
+LEFT JOIN BoothAssignment_tbl ba ON va.ApplicationID = ba.ApplicationID
+LEFT JOIN Booth_tbl b ON ba.BoothID = b.BoothID
+LEFT JOIN ParticipationRecord_tbl pr ON ba.BoothAssignmentID = pr.BoothAssignmentID;
